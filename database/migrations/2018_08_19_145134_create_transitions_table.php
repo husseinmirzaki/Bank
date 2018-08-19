@@ -15,6 +15,9 @@ class CreateTransitionsTable extends Migration
     {
         Schema::create('transitions', function (Blueprint $table) {
             $table->increments('id');
+            $table->mediumInteger('mount');
+            $table->smallInteger('type');
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

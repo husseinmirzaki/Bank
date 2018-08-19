@@ -6,5 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
 {
-    //
+    protected $fillable = [
+        'identification',
+        'user_id',
+        'type',
+        'data'
+    ];
+
+    protected $casts = [
+        'data' => 'array'
+    ];
 }
