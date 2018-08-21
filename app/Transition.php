@@ -10,5 +10,7 @@ class Transition extends Model
         'mount',
         'type',
         'user_id',
+        'bank_id',
+        'start_bank_id',
     ];
 }

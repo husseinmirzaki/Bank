@@ -18,6 +18,8 @@ class CreateTransitionsTable extends Migration
             $table->mediumInteger('mount');
             $table->smallInteger('type');
             $table->integer('user_id');
+            $table->integer('bank_id');
+            $table->integer('start_bank_id')->nullable();
             $table->timestamps();
         });
     }

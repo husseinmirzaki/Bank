@@ -10,7 +10,7 @@ class TransitionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function index()
     {
@@ -20,7 +20,7 @@ class TransitionController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function create()
     {
@@ -30,19 +30,30 @@ class TransitionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     *
+     * @return void
      */
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'mount'   => 'required|numeric',
+            'user_id' => 'required|numeric|exists:users,id',
+            'bank_id' => 'required|numeric|exists:banks,id',
+            'start_bank_id' => 'numeric|exists:banks,id',
+            'type'   => 'numeric|max:200'
+        ];
+        $this->validate($request, $rules);
+
+        Transition::create($request->only(array_keys($rules)));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Transition  $transition
-     * @return \Illuminate\Http\Response
+     * @param  \App\Transition $transition
+     *
+     * @return void
      */
     public function show(Transition $transition)
     {
@@ -52,8 +63,9 @@ class TransitionController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Transition  $transition
-     * @return \Illuminate\Http\Response
+     * @param  \App\Transition $transition
+     *
+     * @return void
      */
     public function edit(Transition $transition)
     {
@@ -63,9 +75,10 @@ class TransitionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Transition  $transition
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Transition          $transition
+     *
+     * @return void
      */
     public function update(Request $request, Transition $transition)
     {
@@ -75,8 +88,9 @@ class TransitionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Transition  $transition
-     * @return \Illuminate\Http\Response
+     * @param  \App\Transition $transition
+     *
+     * @return void
      */
     public function destroy(Transition $transition)
     {
