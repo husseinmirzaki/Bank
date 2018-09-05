@@ -9,6 +9,7 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    private $SUPER_ADMIN = 110;
     /**
      * The attributes that are mass assignable.
      *
@@ -29,6 +30,6 @@ class User extends Authenticatable
 
     public function isSuperAdmin()
     {
-        return false;
+        return $this->level >= $this->SUPER_ADMIN;
     }
 }

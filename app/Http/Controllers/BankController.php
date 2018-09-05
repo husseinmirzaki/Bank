@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class BankController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -80,7 +81,15 @@ class BankController extends Controller
      */
     public function update(Request $request, Bank $bank)
     {
-        //
+        $rules = [
+            'name'        => 'string|max:255',
+            'description' => 'string|max:255',
+            'user_id'     => 'numeric|exists:users,id',
+            'hash'        => 'string|max:200',
+        ];
+        $this->validate($request, $rules);
+
+        $bank->update($request->only(array_keys($rules)));
     }
 
     /**
@@ -89,9 +98,10 @@ class BankController extends Controller
      * @param  \App\Bank $bank
      *
      * @return void
+     * @throws \Exception
      */
     public function destroy(Bank $bank)
     {
-        //
+        $bank->delete();
     }
 }

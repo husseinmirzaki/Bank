@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
 namespace App\Http\Controllers;
 
@@ -37,11 +37,11 @@ class TransitionController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'mount'   => 'required|numeric',
-            'user_id' => 'required|numeric|exists:users,id',
-            'bank_id' => 'required|numeric|exists:banks,id',
+            'mount'         => 'required|numeric',
+            'user_id'       => 'required|numeric|exists:users,id',
+            'bank_id'       => 'required|numeric|exists:banks,id',
             'start_bank_id' => 'numeric|exists:banks,id',
-            'type'   => 'numeric|max:200'
+            'type'          => 'numeric|max:200'
         ];
         $this->validate($request, $rules);
 
@@ -82,7 +82,16 @@ class TransitionController extends Controller
      */
     public function update(Request $request, Transition $transition)
     {
-        //
+        $rules = [
+            'mount'         => 'numeric',
+            'user_id'       => 'numeric|exists:users,id',
+            'bank_id'       => 'numeric|exists:banks,id',
+            'start_bank_id' => 'numeric|exists:banks,id',
+            'type'          => 'numeric|max:200'
+        ];
+        $this->validate($request, $rules);
+
+        $transition->update($request->only(array_keys($rules)));
     }
 
     /**
@@ -91,9 +100,10 @@ class TransitionController extends Controller
      * @param  \App\Transition $transition
      *
      * @return void
+     * @throws \Exception
      */
     public function destroy(Transition $transition)
     {
-        //
+        $transition->delete();
     }
 }

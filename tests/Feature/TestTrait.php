@@ -43,15 +43,25 @@ trait TestTrait
         return factory($model)->create();
     }
 
-    public function login() {
-        Auth::login($this->user());
+    public function login($level = 1)
+    {
+        $user = null;
+        if (is_numeric($level)) {
+            $user = $this->user();
+            $user->level = $level;
+            $user->save();
+        } else {
+            $user = $level;
+        }
+        Auth::login($user);
     }
 
     public function tearDown()
     {
-        if ($exception = $this->response->exception) {
-            $this->response = null;
-            dd($exception);
-        }
+        if (isset($this->response->exception))
+            if ($exception = $this->response->exception) {
+                $this->response = null;
+                dd($exception);
+            }
     }
 }

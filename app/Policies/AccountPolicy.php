@@ -11,12 +11,6 @@ class AccountPolicy
 {
     use HandlesAuthorization;
 
-    public function before($user , $ability)
-    {
-        if($user->isSuperAdmin())
-            return true;
-        return false;
-    }
     /**
      * Determine whether the user can view the account.
      *
@@ -61,7 +55,7 @@ class AccountPolicy
      */
     public function delete(User $user, Account $account)
     {
-        //
+        return $user->isSuperAdmin() || $user->id == $account->user_id;
     }
 
     /**

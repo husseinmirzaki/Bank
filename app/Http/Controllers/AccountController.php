@@ -1,9 +1,10 @@
-<?php
+<?php /** @noinspection ALL */
 
 namespace App\Http\Controllers;
 
 use App\Account;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
@@ -37,7 +38,6 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
-
         $rules = [
             'identification' => 'required|string|min:16|max:17',
             'user_id'        => 'required|numeric|exists:users,id',
@@ -83,7 +83,17 @@ class AccountController extends Controller
      */
     public function update(Request $request, Account $account)
     {
-        //
+        $rules = [
+            'identification' => 'string|max:17|min:16',
+            'user_id' =>'numeric|exists:users,id',
+            'type' => 'numeric',
+            'data' => 'array'
+        ];
+
+        $this->validate($request, $rules);
+
+
+        $account->update($request->only(array_keys($rules)));
     }
 
     /**
@@ -92,9 +102,12 @@ class AccountController extends Controller
      * @param  \App\Account $account
      *
      * @return void
+     * @throws \Exception
      */
     public function destroy(Account $account)
     {
-        //
+        if(Auth::user()->can('delete',$account)) {
+            $account->delete();
+        }
     }
 }
