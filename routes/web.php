@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,5 +22,7 @@ Route::group(['middleware' => 'loggedIn'], function () {
     Route::resource('/bank', 'BankController');
     Route::resource('/account', 'AccountController');
     Route::resource('/transition', 'TransitionController');
-    Route::resource('/user', 'UserController')->only('update', 'destroy');
+    Route::get('/transition/create/withdraw', 'TransitionController@createWithdraw')->name('transition.createWithdraw');
+    Route::get('/transition/create/deposit', 'TransitionController@createDeposit')->name('transition.createDeposit');
+    Route::resource('/user', 'UserController');
 });

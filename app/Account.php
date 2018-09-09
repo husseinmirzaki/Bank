@@ -9,11 +9,7 @@ class Account extends Model
     protected $fillable = [
         'identification',
         'user_id',
-        'type',
-        'data'
-    ];
-
-    protected $casts = [
-        'data' => 'array'
+        'bank_id',
+        'type'
     ];
 }

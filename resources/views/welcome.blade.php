@@ -74,7 +74,6 @@
                         <a href="{{ route('login') }}">Login</a>
                         <a href="{{ route('register') }}">Register</a>
                     @endauth
-                    <a href="{{ route('command') }}">Command</a>
                 </div>
             @endif
 

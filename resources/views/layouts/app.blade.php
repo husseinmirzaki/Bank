@@ -65,6 +65,29 @@
                                     </form>
                                 </div>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a id="navbarDropdownCreateDropDown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    {{ "Adding Menu !!" }} <span class="caret"></span>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownCreateDropDown">
+                                    <a class="dropdown-item" href="{{ route('bank.create') }}">
+                                        {{ __('Add Bank') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('account.create') }}">
+                                        {{ __('Add Account') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('transition.createDeposit') }}">
+                                        {{ __('Add Deposit Transition') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('transition.createWithdraw') }}">
+                                        {{ __('Add Withdraw Transition') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('user.create') }}">
+                                        {{ __('Add User') }}
+                                    </a>
+                                </div>
+                            </li>
                         @endguest
                     </ul>
                 </div>

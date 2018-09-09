@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Bank;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\MessageBag;
 
 class BankController extends Controller
 {
+
+    use ControllersTrait;
 
     /**
      * Display a listing of the resource.
@@ -25,7 +29,7 @@ class BankController extends Controller
      */
     public function create()
     {
-        //
+        return $this->getCreateView(Bank::class , 'models.bank' , null , 'bank');
     }
 
     /**
@@ -40,11 +44,20 @@ class BankController extends Controller
         $rules = [
             'name'        => 'required|string|max:255',
             'description' => 'required|string|max:255',
-            'user_id'     => 'required|numeric|exists:users,id',
         ];
         $this->validate($request, $rules);
 
-        Bank::create($request->only(array_keys($rules)));
+        $data = $request->only(array_keys($rules));
+        $data['hash'] = str_random(200);
+        $data['user_id'] = Auth::user()->id;
+
+        Bank::create($data);
+
+        return back()->withErrors(new MessageBag([
+            'success' => [
+                'added successfully'
+            ]
+        ]));
     }
 
     /**
@@ -68,7 +81,7 @@ class BankController extends Controller
      */
     public function edit(Bank $bank)
     {
-        //
+        return $this->getEditView($bank, Bank::class,  'bank');
     }
 
     /**
@@ -90,6 +103,10 @@ class BankController extends Controller
         $this->validate($request, $rules);
 
         $bank->update($request->only(array_keys($rules)));
+
+        return back()->withErrors(new MessageBag([
+            'success' => 'updated successfuly'
+        ]));
     }
 
     /**
@@ -102,6 +119,19 @@ class BankController extends Controller
      */
     public function destroy(Bank $bank)
     {
-        $bank->delete();
+        if (Auth::user()->can('delete', $bank)) {
+            $bank->delete();
+            return back()->withErrors(new MessageBag([
+                'success' => [
+                    'Deleted Bank Successfuly'
+                ]
+            ]));
+        }
+
+        return back()->withErrors(new MessageBag([
+            [
+                __('You are not allowed to delete this element')
+            ]
+        ]));
     }
 }

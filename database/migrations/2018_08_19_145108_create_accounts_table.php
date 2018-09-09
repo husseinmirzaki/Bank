@@ -17,8 +17,8 @@ class CreateAccountsTable extends Migration
             $table->increments('id');
             $table->string('identification' , 16)->unique();
             $table->integer('user_id');
-            $table->smallInteger('type')->default(1);
-            $table->text('data')->nullable();
+            $table->integer('bank_id');
+            $table->smallInteger('type');
             $table->timestamps();
         });
     }

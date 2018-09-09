@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Transition;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\MessageBag;
 
 class TransitionController extends Controller
 {
+
+    use ControllersTrait;
+
     /**
      * Display a listing of the resource.
      *
@@ -22,9 +27,23 @@ class TransitionController extends Controller
      *
      * @return void
      */
-    public function create()
+    public function createDeposit()
     {
-        //
+        return $this->getCreateView('App\Transition', 'models.transitionDeposit', function ($table) {
+            return Transition::where('type', 1);
+        }, 'transition');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return void
+     */
+    public function createWithdraw()
+    {
+        return $this->getCreateView('App\Transition', 'models.transitionWithdraw', function ($table) {
+            return Transition::where('type', 2);
+        }, 'transition');
     }
 
     /**
@@ -37,15 +56,42 @@ class TransitionController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'mount'         => 'required|numeric',
-            'user_id'       => 'required|numeric|exists:users,id',
-            'bank_id'       => 'required|numeric|exists:banks,id',
-            'start_bank_id' => 'numeric|exists:banks,id',
-            'type'          => 'numeric|max:200'
+            'type' => 'required',
         ];
         $this->validate($request, $rules);
 
-        Transition::create($request->only(array_keys($rules)));
+
+        if ($request->get('type') == 1) {
+            $rules = [
+                'mount'           => 'required|numeric',
+                'to_bank_id'      => 'required|numeric|exists:banks,id',
+                'from_bank_id'    => 'required|numeric|exists:banks,id',
+                'from_account_id' => 'required|numeric|exists:accounts,id',
+                'to_account_id'   => 'required|numeric|exists:accounts,id',
+                'type'            => 'required',
+            ];
+            $this->validate($request, $rules);
+
+        } elseif ($request->get('type') == 2) {
+
+            $rules = [
+                'mount'           => 'required|numeric',
+                'from_bank_id'    => 'required|numeric|exists:banks,id',
+                'from_account_id' => 'required|numeric|exists:accounts,id',
+                'type'            => 'required',
+            ];
+            $this->validate($request, $rules);
+        }
+        $data = $request->only(array_keys($rules));
+        $data['user_id'] = Auth::user()->id;
+
+        Transition::create($data);
+
+        return back()->withErrors(new MessageBag([
+            'success' => [
+                'added successfuly'
+            ]
+        ]));
     }
 
     /**
@@ -69,7 +115,9 @@ class TransitionController extends Controller
      */
     public function edit(Transition $transition)
     {
-        //
+        if ($transition->type == 1)
+            return $this->getEditView($transition, Transition::class, 'transition', 'transition.createDeposit');
+        return $this->getEditView($transition, Transition::class, 'transition', 'transition.createWithdraw');
     }
 
     /**
@@ -92,6 +140,10 @@ class TransitionController extends Controller
         $this->validate($request, $rules);
 
         $transition->update($request->only(array_keys($rules)));
+
+        return back()->withErrors(new MessageBag([
+            'success' => 'updated successfuly'
+        ]));
     }
 
     /**
@@ -104,6 +156,19 @@ class TransitionController extends Controller
      */
     public function destroy(Transition $transition)
     {
-        $transition->delete();
+        if (Auth::user()->can('delete', $transition)) {
+            $transition->delete();
+            return back()->withErrors(new MessageBag([
+                'success' => [
+                    'Deleted Transition Successfuly'
+                ]
+            ]));
+        }
+
+        return back()->withErrors(new MessageBag([
+            [
+                __('You are not allowed to delete this element')
+            ]
+        ]));
     }
 }
